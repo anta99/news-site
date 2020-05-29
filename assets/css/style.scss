@@ -1,0 +1,363 @@
+$black:#404040;
+$red:#ec5050;
+$orange:#f7ae45;
+$white:#fff;
+*{
+    margin:0px;
+    padding:0px;
+    box-sizing: border-box;
+}
+.col-12{
+    padding: 0px;
+}
+.img{
+    width: 100%;
+}
+ul{
+    list-style: none;
+    margin: 0px;
+}
+a{
+  color:#000;
+
+}
+@mixin linkHover($boja){
+  &:hover{
+      color:$boja;
+  }
+}
+.row{
+    margin: 0px;
+}
+.container-fluid{
+    padding: 0px;
+}
+.res{
+    font-size:25px;
+    padding: 30px 15px;
+}
+.clearFocus{
+    &:focus{
+        box-shadow:none;
+        border-color: $black;
+    }
+}
+nav{
+    background-color: $black !important;
+    color:$white;
+    a{
+        color:$white;
+        @include linkHover(silver);
+
+    }
+}
+.searchMenu{
+    padding-top:2.25rem;
+    //position: relative;
+    text-align: center;
+    padding-bottom: 10px;
+    i{
+        font-size:20px;
+        cursor: pointer;
+    }
+    input{
+        color:$white;
+        border: none;
+        background-color: transparent;
+        border-bottom: 2px solid $white;
+        width:70%;
+        position: relative;
+    }
+}
+#menuForm{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#searchResult{
+    position: absolute;
+    right:3rem;
+    left:3rem;
+    top:73%;
+    max-height: 300px;
+    overflow-y: scroll;
+    width:65%;
+    margin:0px auto;
+    z-index:990;
+    border: 2px solid $black;
+    //background-color: red;
+    @media screen and(max-width:992px){
+        left:0;
+        right:0;
+        top:93%;
+    }
+    ul{
+        background-color: $white;
+        li{
+            padding:10px;
+            border-bottom: 2px solid $black;
+            a{
+                color:#404040;
+            }
+        }
+    }
+}
+.md-form input[type=text]:not(.browser-default):focus:not([readonly]){
+     border-bottom:1px solid #fff ;
+     box-shadow: none;
+     color:$white;
+}
+.fixedMenu{
+    position: fixed;
+    width:100%;
+    top:0;
+    right:-100%;
+    height: 100vh;
+    background:rgba($black,1);
+    //overflow: hidden;
+    overflow-y: auto;
+    z-index: 998;
+    animation: slideMenu .8s forwards;
+}
+@keyframes slideMenu{
+    0%{
+        right:-100%;
+    }
+    100%{
+        right:0%
+    }
+}
+.menu{
+    //padding: 20px;
+    li{
+        display: inline-block;
+        padding: 0px 10px;
+        padding-top:12px;
+        //position: relative;
+        &:hover #submenu{
+            display: block;
+        }
+        @media screen and (max-width:992px) {
+            display: block;
+            text-align: center;
+            &:first-child{
+                margin-top: 10vh;
+            }
+        }
+        a{
+            font-size:25px;
+            @media screen and (min-width:992px) and (max-width:1200px) {
+            font-size:20px;
+        }
+        }
+    }
+}
+#submenu{
+    position: absolute;
+    top:45px;
+    background-color: $black;
+    left:0;
+    padding:10px;
+    z-index:999;
+    width: 120px;
+    display: none;
+    li{
+        padding-top:5px;
+    }
+    @media screen and (max-width:992px) {
+            display: block;
+            text-align: center;
+            position: relative;
+            top:0;
+            padding:0px;
+            width:100%;
+            margin-bottom:20px;
+            li{
+                margin-top: 0px;
+            }
+        }
+
+}
+#closeBtn{
+    position:absolute;
+    top:20px;
+    display: none;
+    right:40px;
+    @media screen and (max-width:992px) {
+            display: block;
+        }
+}
+.strelica{
+    font-size:30px;
+    width:4%;
+    &:hover{
+        background-color: rgba($black,0.3);
+    }
+}
+.naslov{
+    color:$white;
+    position:absolute;
+    bottom:0;
+    font-size:14px;
+    left:0;
+    h2{
+        font-size:40px;
+    }
+    a{
+        color: $white;
+        &:hover{
+            text-decoration: underline;
+        }
+        
+    }
+}
+.side{
+    border: 2px solid black;
+}
+.sidePanel{
+    border: 2px solid #000;
+}
+.slika{
+    //background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url("../../slika.jpg");
+    background-size: cover;
+    height:50vh;
+    position: relative;
+    background-position:center;
+}
+.cat{
+    font-size:14px;
+    padding:5px;
+    width:fit-content;
+    background-color: $orange !important;
+}
+.post-details{
+    font-size: 15px;
+    padding:10px;
+}
+.card-title a{
+     @include linkHover($red);
+}
+.news-details{
+    font-size:12px;
+}
+.readNews{
+    background-color: $black !important;
+    position: relative;
+    &::after{
+        content: "Pogledaj vest";
+        transition: .5s;
+        width:0%;
+        padding: inherit;
+        position: absolute;
+        opacity: 0;
+        background-color: $orange !important;
+        top:0;
+        left:0;
+        white-space: nowrap;
+    }
+    &:hover:after{
+        width: 100%;
+        opacity: 1;
+    }
+}
+.popularLink{
+    @include linkHover($red);
+}
+.socialMedia{
+    i{
+        font-size:45px;
+        margin:0px 10px;
+        @include linkHover($orange);
+        color:$black;
+    }
+}
+footer{
+    background-color: $black;
+    color:$white;
+    i{
+        font-size:40px;
+        margin: 20px;
+        color:$white;
+        @include linkHover($orange);
+    }
+}
+.nav-tabs{
+    background-color: $orange;
+    a{
+        color: $white;
+    }
+}
+.buttonCustom{
+    background-color: $black !important;
+    color:#fff !important;
+}
+.closeBtn{
+     background-color: $red !important;
+     color:#fff !important;
+}
+.form-control{
+    border: none;
+    border-bottom: 2px solid $black;
+    border-radius: 0px;
+}
+.inputError{
+    border-bottom: 2px solid $red;
+}
+//Single News.php
+.comment{
+    border-bottom: 1px solid $black;
+}
+.reply{
+    padding-left: 4.5rem !important;
+}
+.comDate{
+    margin-top: 20px;
+    bottom:5px;
+    right:0px;
+}
+.deleteComm{
+    top:5%;
+    font-size:20px;
+    right:10px;
+    cursor: pointer;
+}
+.categoryNews{
+    border: 1px solid $black;
+    a:hover{
+        color: $black;
+    }
+}
+.categoryActive{
+    background-color: $orange;
+    a{
+        color:$white;
+    }
+}
+.catchx{
+    display: none;
+}
+.response{
+    padding-left:50px !important;
+}
+.relatedNews{
+    margin-top:30px;
+    justify-content: space-between;
+    a:hover{
+        color:$red
+    }
+}
+.commentArea{
+    border: 2px solid $black;
+    resize: none;
+    width: 100%;
+    padding:15px;
+}
+//News
+.noNews{
+    height: calc(88vh - 250px);
+}
+.singleNewsContainer{
+    min-height: 580px;
+}
+
+
