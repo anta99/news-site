@@ -5,6 +5,10 @@
           box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .col-12 {
   padding: 0px;
 }
@@ -201,6 +205,12 @@ nav a:hover {
 
 #submenu li {
   padding-top: 5px;
+}
+
+@media screen and (max-width: 1200px) {
+  #submenu {
+    top: 40px;
+  }
 }
 
 @media screen and (max-width: 992px) {
@@ -447,5 +457,13 @@ footer i:hover {
 
 .singleNewsContainer {
   min-height: 580px;
+}
+
+.page-link {
+  font-size: 20px !important;
+}
+
+.pagination.pg-amber .page-item.active .page-link {
+  background-color: #f7ae45 !important;
 }
 /*# sourceMappingURL=style.css.map */

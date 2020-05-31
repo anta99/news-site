@@ -33,7 +33,7 @@
                 <?php
                     foreach($tags as $tag):
                 ?>
-                <li class="cat d-inline mr-2"><a href="<?=$tag["id"]?>"><?=$tag["naziv"]?></a></li>
+                <li class="cat d-inline mr-2"><a href="index.php?page=tagNews&tag=<?=$tag["id"]?>"><?=$tag["naziv"]?></a></li>
 
                 <?php
                     endforeach;

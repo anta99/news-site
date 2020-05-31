@@ -13,7 +13,7 @@ $(document).ready(function(){
             }
         }
     })
-    menuSearch.addEventListener("input",function(){
+    menuSearch.addEventListener("input",function(e){
         const searchQuery=this.value;
         if(searchQuery.length>=3){
             const postObj={
@@ -24,7 +24,6 @@ $(document).ready(function(){
                 searchResultWrite(res);
                 $("#searchResult").removeClass("d-none").addClass("d-block");
             })
-            
         }
         else{
             $("#searchResult").removeClass("d-block").addClass("d-none");
@@ -39,6 +38,14 @@ $(document).ready(function(){
         $(".searchMenu").addClass("d-none");
         $(".searchMenu i").addClass("fa-search").removeClass("fa-times");
     })
+    $(".newsItem a").click(function () {
+        writeInLS(1, []);
+    });
+    $("#submenu li a").click(function(e){
+        const catIds=[this.dataset.catid];
+        writeInLS(1,catIds);
+    })
+    
     //page=singleNews
     if(window.location.href.indexOf("page=singleNews")!=-1){
         baseUrl=window.location.href;
@@ -119,30 +126,42 @@ $(document).ready(function(){
     }
     //page=news
     else if (window.location.href.indexOf("page=news") != -1){
-        console.log("Ovo je news page");
-        $(".categoryNews a").click(function(){
+        
+        const parseFilters = JSON.parse(localStorage.getItem("filteri"));
+        console.log(parseFilters);
+        let filterObj={
+            filter:"OK"
+        }
+        if (parseFilters!=null){
+            filterObj.categoriesIds = parseFilters.categories;
+            filterObj.page = parseFilters.page;
+        }
+        ajaxReq("models/news/filterNews.php", filterObj, function (res) {
+            printNews(res.news);
+            paginationPrint(res.pagesNumber);
+            if (parseFilters != null) {
+                colorActiveCategories(parseFilters.categories);
+                colorPagination(parseFilters.page);
+            }
+        });
+        $(".categoryNews a").click(function(e){
+            e.preventDefault();
             this.parentElement.classList.toggle("categoryActive");
-            const activeCategories = [...document.querySelectorAll(".categoryActive a")];
-            const categoriesIds=activeCategories.map(cat=>cat.dataset.catid);
             //console.log(categoriesIds);
             const filterObj={
-                categoriesIds: categoriesIds,
+                categoriesIds: getActiveCategories(),
                 page:1,
                 filter:"OK"
             };
+            writeInLS(1,getActiveCategories());
             ajaxReq("models/news/filterNews.php",filterObj,function(res){
                 printNews(res.news);
+                paginationPrint(res.pagesNumber);
             });
             
+            
         })
-        // ajaxReq("models/news/filterNews.php", {filter:"OK"}, function (res) {
-        //     if(res.news.length!=0){
-        //         printNews(res.news);
-        //     }
-        //     else{
-        //         console.log("Prazno");
-        //     }
-        // });
+        //$(".page-link").click(changePage);
     }
     //index
     else{
@@ -157,7 +176,6 @@ $(document).ready(function(){
                 console.log(xhr);
             }
         })
-        console.log(window.location.href)
     }
 })
 //Regex
@@ -211,7 +229,7 @@ function commentFormPrint(parent){
         htmlForm.innerHTML += `<form action="" id="komentarVest" name="komentarVest" method="POST">
         <textarea name="commentArea" class="commentArea" rows="10" placeholder="Ostavite komentar..."></textarea>
         <p class="text-danger"></p>
-        <button class="btn buttonCustom commReply">Posalji</button>
+        <button class="btn buttonCustom commReply mb-3">Posalji</button>
         <button class="btn buttonCustom replyClose mb-3">Zatvori</button>
          </form>
     `;
@@ -353,8 +371,57 @@ function printNews(arr){
     else{
         html+=`
         <div class="col-12 noNews text-center">
-        <h3 class="">Nažalost nema vest za izabrane kategorije</h3>
+        <h3 class="">Nažalost nema vesti za izabrane kategorije</h3>
         </div>`;
     }
     target.innerHTML=html;
+}
+function setNewsPage(pageNumber){
+   
+}
+function paginationPrint(pagesNumber){
+    const target = document.querySelector(".pagination");
+    let html="";
+    for(let i=1;i<=pagesNumber;i++){
+        i == 1 ? html += `<li class="page-item active"><a href="#categoriesList" class="page-link">${i}</a></li>` : html +=`<li class="page-item"><a href="#categoriesList" class="page-link">${i}</a></li>`;
+    }
+    target.innerHTML=html;
+    $(".page-link").click(changePage);
+}
+function getActiveCategories(){
+    const activeCategories = [...document.querySelectorAll(".categoryActive a")];
+    const categoriesIds = activeCategories.map(cat => cat.dataset.catid);
+    //console.log([...document.querySelectorAll(".categoryActive a[data-catid='5']")])
+    return categoriesIds;
+}
+function changePage(){
+    const pageNumber = Number(this.innerHTML);
+    $(".page-item").removeClass("active");
+    this.parentElement.classList.add("active");
+    const postObj={
+        page:pageNumber,
+        categoriesIds:getActiveCategories(),
+        filter:"OK"
+    }
+    writeInLS(pageNumber,getActiveCategories());
+    ajaxReq("models/news/filterNews.php",postObj,function(res){
+        printNews(res.news);
+    });
+}
+function colorActiveCategories(arr){
+    for(let i of arr){
+        document.querySelector(`.categoryNews a[data-catid='${i}']`).parentElement.classList.add("categoryActive");
+    }
+}
+function colorPagination(activePage){
+    $(".page-item").removeClass("active");
+    const pageToColor=[...document.querySelectorAll(".page-link")].filter(page=>page.innerHTML==activePage);
+    pageToColor[0].parentElement.classList.add("active");
+}
+function writeInLS(page,cat){
+    const obj={
+        page:page,
+        categories:cat
+    }
+    localStorage.setItem("filteri",JSON.stringify(obj));
 }

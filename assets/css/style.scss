@@ -7,6 +7,9 @@ $white:#fff;
     padding:0px;
     box-sizing: border-box;
 }
+html{
+  scroll-behavior: smooth;
+}
 .col-12{
     padding: 0px;
 }
@@ -164,18 +167,21 @@ nav{
     li{
         padding-top:5px;
     }
+    @media screen and (max-width:1200px) {
+        top:40px;
+    }
     @media screen and (max-width:992px) {
-            display: block;
-            text-align: center;
-            position: relative;
-            top:0;
-            padding:0px;
-            width:100%;
-            margin-bottom:20px;
-            li{
-                margin-top: 0px;
-            }
+        display: block;
+        text-align: center;
+        position: relative;
+        top:0;
+        padding:0px;
+        width:100%;
+        margin-bottom:20px;
+        li{
+            margin-top: 0px;
         }
+    }
 
 }
 #closeBtn{
@@ -359,5 +365,10 @@ footer{
 .singleNewsContainer{
     min-height: 580px;
 }
-
+.page-link{
+    font-size:20px !important;
+}
+.pagination.pg-amber .page-item.active .page-link {
+	background-color: $orange !important;
+}
 

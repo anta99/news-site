@@ -1,7 +1,9 @@
 <header class="container-fluid p-0">
     <nav class="row">
         <div class="col-1 p-2">
-            <img src="logo.png" alt="logo" />
+            <a href="index.php">
+              <img src="assets/images/logoNovi.png" alt="logo" />
+            </a>
             <!-- <h1>Ovde ide logo</h1> -->
             </div>
             <div class="col-12 col-lg-7 p-3 d-none d-lg-block menu">
@@ -13,12 +15,12 @@
                         foreach($nav as $item):
                           if($item["naziv"]=="Vesti"):
                     ?>
-                    <li class="position-relative"><a href="<?=$item["link"]?>"><?=$item["naziv"]?> <i class='fa fa-angle-down'></i></a>
+                    <li class="position-relative newsItem"><a href="<?=$item["link"]?>"><?=$item["naziv"]?> <i class='fa fa-angle-down'></i></a>
                     <ul id='submenu'>
                     <?php
                         foreach($categories as $cat):
                     ?>
-                    <li><a href="index.php?page=news&cat=<?=$cat["id"]?>"><?=$cat["naziv"]?></a></li>
+                    <li><a href="index.php?page=news" data-catid="<?=$cat["id"]?>"><?=$cat["naziv"]?></a></li>
                     <?php
                         endforeach;
                     ?>

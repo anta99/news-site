@@ -11,7 +11,7 @@
             }
             $tagsString=substr($tagsString,0,-1);
         }
-        $searchQuery="SELECT v.* FROM vesti v INNER JOIN tag_vest tv ON v.id=tv.id_vest INNER JOIN tagovi t ON t.id=tv.id_tag WHERE v.naslov LIKE :search OR t.naziv IN (:tags) GROUP BY v.id";
+        $searchQuery="SELECT v.* FROM vesti v INNER JOIN tag_vest tv ON v.id=tv.id_vest INNER JOIN tagovi t ON t.id=tv.id_tag WHERE v.naslov LIKE :search OR (t.naziv IN (:tags) OR t.naziv LIKE :search) GROUP BY v.id";
         $like="%$search%";
         $prepare=$conn->prepare($searchQuery);
         $prepare->bindParam(":search",$like);
