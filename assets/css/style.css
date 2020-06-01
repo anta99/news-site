@@ -466,4 +466,10 @@ footer i:hover {
 .pagination.pg-amber .page-item.active .page-link {
   background-color: #f7ae45 !important;
 }
+
+#tagNewsCount {
+  font-size: 25px;
+  padding-left: 10px;
+  margin: 0px;
+}
 /*# sourceMappingURL=style.css.map */

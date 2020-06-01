@@ -12,7 +12,7 @@
     <section class="row">
         <div class="col-12 p-0 p-md-3">
             <h1 class="text-center">Pretraga: <?=$news["tag"][0]["naziv"]?></h1>
-            <h2>Rezultati:<?=count($news["news"])?></h2>
+            <h2 id="tagNewsCount" class="text-muted">Rezultati:<?=count($news["news"])?></h2>
         </div>
     </section>
     <section class="row">

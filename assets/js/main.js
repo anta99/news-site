@@ -71,25 +71,22 @@ $(document).ready(function(){
         })
 
     }
-    //page=signIn
-    else if (window.location.href.indexOf("page=signIn") != -1){
-        console.log("Ovo je strana signIn.php");
+    //page=authorization
+    else if (window.location.href.indexOf("page=authorization") != -1){
+        //Sign in check
         $("#logInForm").submit(function(e){
             console.log("Idemo log");
             let ok=true;
-            const mail = document.querySelector("#logMail");
+            const username = document.querySelector("#logName");
             const password = document.querySelector("#logPass");
-            !inputCheck(emailRegex, mail) ? ok = false : ok = true;
+            !inputCheck(userNameRegex, username) ? ok = false : ok = true;
             !inputCheck(passwordRegex, password) ? ok = false : ok = true;
             if(ok){
                 return true;
             }
             e.preventDefault();
         })
-    }
-    //page=register
-    else if (window.location.href.indexOf("page=register") != -1) {
-        console.log("Ovo je strana register.php");
+        //Register check
         $(".regBtn").click(function () {
             const firstName = document.querySelector("#regFirstName");
             const lastName = document.querySelector("#regLastName");
@@ -99,11 +96,11 @@ $(document).ready(function(){
             const confPassword = document.querySelector("#confPass");
             const terms = document.querySelector("#terms");
             let ok = true;
-            !inputCheck(firstNameRegex, firstName) ? ok = false : ok = true;
-            !inputCheck(lastNameRegex, lastName) ? ok = false : ok = true;
-            !inputCheck(userNameRegex, username) ? ok = false : ok = true;
-            !inputCheck(emailRegex, mail) ? ok = false : ok = true;
-            !inputCheck(passwordRegex, password) ? ok = false : ok = true;
+            !inputCheck(firstNameRegex, firstName) ? ok = false : null;
+            !inputCheck(lastNameRegex, lastName) ? ok = false : null;
+            !inputCheck(userNameRegex, username) ? ok = false : null;
+            !inputCheck(emailRegex, mail) ? ok = false : null;
+            !inputCheck(passwordRegex, password) ? ok = false : null;
             if (confPassword.value != password.value) {
                 ok = false;
                 confPassword.classList.add("inputError");
@@ -120,9 +117,33 @@ $(document).ready(function(){
             else {
                 terms.nextElementSibling.innerHTML = "";
             }
-            ok ? console.log("Saljemo na back") : console.log("Nesto ne valja");
+            // ok ? console.log("Saljemo na back") : console.log("Nesto ne valja");
+            if(ok){
+                const list = document.querySelector("#registerMessage");
+                const registerObj={
+                    firstName: firstName.value,
+                    //firstName: "djolo",
+                    lastName:lastName.value,
+                    username:username.value,
+                    mail:mail.value,
+                    password:password.value,
+                    terms:terms.checked,
+                    register:true
+                };
+                //console.log(registerObj);
+                ajaxReq("models/authorization/register.php",registerObj,function(res){
+                    console.log(res);
+                    list.innerHTML += `<li class="list-group-item list-group-item-success">Molimo vas verifikujte svoj nalog klikom na ovaj <a href="index.php?page=verificationPage&code=${res}">link</a></li>`
+
+                },function(xhr){
+                    const errors=xhr.responseJSON;
+                    
+                    for(let i of errors){
+                        list.innerHTML +=`<li class="list-group-item list-group-item-danger">${i}</li>`;
+                    }
+                })
+            }
         })
-        
     }
     //page=news
     else if (window.location.href.indexOf("page=news") != -1){
@@ -383,7 +404,7 @@ function paginationPrint(pagesNumber){
     const target = document.querySelector(".pagination");
     let html="";
     for(let i=1;i<=pagesNumber;i++){
-        i == 1 ? html += `<li class="page-item active"><a href="#categoriesList" class="page-link">${i}</a></li>` : html +=`<li class="page-item"><a href="#categoriesList" class="page-link">${i}</a></li>`;
+        i == 1 ? html += `<li class="page-item active"><a href="#" class="page-link">${i}</a></li>` : html +=`<li class="page-item"><a href="#" class="page-link">${i}</a></li>`;
     }
     target.innerHTML=html;
     $(".page-link").click(changePage);
