@@ -108,6 +108,7 @@ nav a:hover {
     left: 0;
     right: 0;
     top: 93%;
+    width: 75%;
   }
 }
 
@@ -384,6 +385,10 @@ footer i:hover {
   border-radius: 0px;
 }
 
+.form-control[readonly] {
+  background-color: transparent;
+}
+
 .inputError {
   border-bottom: 2px solid #ec5050;
 }
@@ -471,5 +476,30 @@ footer i:hover {
   font-size: 25px;
   padding-left: 10px;
   margin: 0px;
+}
+
+#userTabs {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.nav-link {
+  border-radius: 0px !important;
+}
+
+.changeInfo {
+  cursor: pointer;
+}
+
+.activeInfo {
+  border-bottom: 2px solid #f7ae45;
+}
+
+.activeInfo:hover {
+  border-bottom: 2px solid #f7ae45;
+}
+
+.col-form-label {
+  line-height: 2.3;
 }
 /*# sourceMappingURL=style.css.map */

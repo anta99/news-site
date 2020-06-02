@@ -93,6 +93,7 @@ nav{
         left:0;
         right:0;
         top:93%;
+        width:75%;
     }
     ul{
         background-color: $white;
@@ -305,6 +306,10 @@ footer{
     border: none;
     border-bottom: 2px solid $black;
     border-radius: 0px;
+    //outline: none;
+}
+.form-control[readonly]{
+    background-color: transparent;
 }
 .inputError{
     border-bottom: 2px solid $red;
@@ -377,5 +382,23 @@ footer{
     padding-left: 10px;
     margin: 0px;
 }
-
+//User profile
+#userTabs{
+    box-shadow: none;
+}
+.nav-link{
+    border-radius: 0px !important;
+}
+.changeInfo{
+    cursor: pointer;
+}
+.activeInfo{
+    border-bottom: 2px solid $orange;
+    &:hover{
+        border-bottom: 2px solid $orange;
+    }
+}
+.col-form-label{
+    line-height: 2.3;
+}
 

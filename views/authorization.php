@@ -1,18 +1,35 @@
+<?php
+    if($logged){
+       header("Location:index.php?page=userProfile"); 
+    }
+?>
 <main class="container-fluid p-3">
     <h1 class="text-center my-3">Prijava/Registracija</h1>
+    <!-- Sign In Form -->
     <div class="row p-0 p-lg-2">
         <section class="col-12 col-md-6 signInForm">
-                <form class="text-center p-2 p-md-5" method="POST" action="" id="logInForm" name="logInForm">
-                    <h2 class="h4 mb-4">Prijavi se</h2>
-                    <input type="text" id="logName" name="logName" class="form-control mt-2 clearFocus" placeholder="Korisničko ime" />
-                    <p class="text-danger"></p>
-                    <input type="password" id="logPass" name="logPass" class="form-control mt-4 clearFocus" placeholder="Lozinka" />
-                    <p class="text-danger"></p>
-                    <div class="text-center mt-2">
-                        <button class="btn btn-info buttonCustom logBtn">Prijavi se</button>
-                    </div>
-                </form>
+            <?php
+                if(isset($_SESSION["logInFail"])):
+            ?>
+            <div class="alert alert-danger text-center m-0">
+               <p class="h5"><?=$_SESSION["logInFail"]?></p>
+            </div>
+            <?php
+                endif;
+                unset($_SESSION["logInFail"]);
+            ?>
+            <form class="text-center p-2 p-md-5" method="POST" action="models/authorization/signIn.php" id="logInForm" name="logInForm">
+                <h2 class="h4 mb-4">Prijavi se</h2>
+                <input type="text" id="logName" name="logName" class="form-control mt-2 clearFocus" placeholder="Korisničko ime" />
+                <p class="text-danger"></p>
+                <input type="password" id="logPass" name="logPass" class="form-control mt-4 clearFocus" placeholder="Lozinka" />
+                <p class="text-danger"></p>
+                <div class="text-center mt-2">
+                    <button type="submit" name="signInBtn" class="btn btn-info buttonCustom logBtn">Prijavi se</button>
+                </div>
+            </form>
         </section>
+        <!-- Register Form -->
         <section class="col-12 col-md-6 registerFrom">
             <form class="text-center p-2 p-md-5" method="POST" action="" id="regForm" name="regForm">
                 <h2 class="h4 mb-4">Registruj se</h2>

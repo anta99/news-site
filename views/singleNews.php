@@ -54,8 +54,14 @@
                 </h2>
                 
                 <div id="newComment">
-                    <button id="newCommentButton" class="buttonCustom btn" data-commtype="newComment">Dodaj komentar</button>
+                    <button id="newCommentButton" class="buttonCustom btn" data-commtype="newComment" <?php if(!$logged){echo "disabled='disabled'";}?>>Dodaj komentar</button>
+                    <?php
+                        if(!$logged):
+                    ?>
                     <span class="d-block text-muted font-italic">Morate biti prijavljeni da biste komentarisali</span>
+                    <?php
+                        endif;
+                    ?>
                 </div>
             </div>
             <!-- Ispis komentara -->
@@ -68,9 +74,16 @@
                     <div class="position-relative p-3 mb-2 comment">
                         <span class="font-weight-bold"><?=$comment["username"]?></span>
                         <span class="comDate position-absolute"><?=date("d/m/Y H:i",strtotime($comment["datum"]))?></span>
+                        <?php
+                            if($admin):
+                        ?>
                         <span class="deleteComm position-absolute" data-commentid="<?=$comment["id"]?>"><i class="fa fa-times"></i></span>
+                        <?php
+                            endif;
+                        ?>
                         <p class="mt-3"><?=$comment["tekst"]?></p>
-                        <button class="btn buttonCustom btnReply mb-3">Odgovori</button>
+                        <button class="btn buttonCustom btnReply mb-3" <?php
+                        if(!$logged){echo "disabled='disabled'";}?>>Odgovori</button>
                     </div>
                     <?php
                         if($comment["roditelj_id"]==NULL):
@@ -84,7 +97,13 @@
                         <div class="position-relative p-3 mb-2 comment reply">
                             <span class="font-weight-bold"><?=$reply["username"]?></span>
                             <span class="comDate position-absolute"><?=date("d/m/Y H:i",strtotime($reply["datum"]))?></span>
-                            <span class="deleteComm position-absolute" data-commentid="<?=$reply["id"]?>"><i class="fa fa-times"></i></span>
+                            <?php
+                                if($admin):
+                            ?>
+                            <span class="deleteComm position-absolute" data-commentid="<?=$comment["id"]?>"><i class="fa fa-times"></i></span>
+                            <?php
+                                endif;
+                            ?>
                             <p class="mt-3"><?=$reply["tekst"]?></p>
                         </div>
                         <?php

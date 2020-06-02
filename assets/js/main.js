@@ -133,14 +133,15 @@ $(document).ready(function(){
                 //console.log(registerObj);
                 ajaxReq("models/authorization/register.php",registerObj,function(res){
                     console.log(res);
-                    list.innerHTML += `<li class="list-group-item list-group-item-success">Molimo vas verifikujte svoj nalog klikom na ovaj <a href="index.php?page=verificationPage&code=${res}">link</a></li>`
+                    list.innerHTML = `<li class="list-group-item list-group-item-success">Molimo vas verifikujte svoj nalog klikom na ovaj <a href="index.php?page=verificationPage&code=${res}">link</a></li>`
 
                 },function(xhr){
                     const errors=xhr.responseJSON;
-                    
+                    let html="";
                     for(let i of errors){
-                        list.innerHTML +=`<li class="list-group-item list-group-item-danger">${i}</li>`;
+                        html +=`<li class="list-group-item list-group-item-danger">${i}</li>`;
                     }
+                    list.innerHTML=html;
                 })
             }
         })
@@ -183,6 +184,85 @@ $(document).ready(function(){
             
         })
         //$(".page-link").click(changePage);
+    }
+    //User profile
+    else if (window.location.href.indexOf("page=userProfile") != -1){
+        const hiiden = document.querySelector("#userhidden").value;
+        $(".changeInfo").click(function(){
+            const input=this.parentElement.querySelector("input");
+            input.removeAttribute("readonly","readonly");
+            input.classList.add("activeInfo");
+            document.querySelector(".changeBtn").classList.remove("d-none");
+        });
+        $(".resetBtn").click(function(){
+            const profileChangeForm = document.querySelectorAll("#profileChange input");
+            profileChangeForm.forEach(input=>{
+                input.setAttribute("readonly", "readonly");
+                input.classList.remove("activeInfo");
+            });
+            this.parentElement.classList.add("d-none");
+        });
+        $("#changePass").click(function(){
+            const oldPassword=document.querySelector("#oldPassword");
+            const newPassword=document.querySelector("#newPassword");
+            const confPassword = document.querySelector("#confirmPass");
+            const passwordMessage = document.querySelector("#passwordMessage");
+            let ok= true;
+            if(!inputCheck(passwordRegex,oldPassword)){
+                ok=false;
+            }
+            if (!inputCheck(passwordRegex, newPassword)){
+                ok=false;
+            }
+            else{
+                if(newPassword.value!=confPassword.value){
+                    ok=false;
+                    confPassword.nextElementSibling.innerHTML ="Molimo vas da ispravno popunite ovo polje";
+                }
+                else{
+                    confPassword.nextElementSibling.innerHTML = "";
+                }
+            }
+            if(ok){
+                const postObj={
+                    userId:hiiden,
+                    oldPassword:oldPassword.value,
+                    newPassword:newPassword.value,
+                    confirmPass: confPassword.value,
+                    change:true
+                }
+                ajaxReq("models/userProfile/changePassword.php",postObj,function(res){
+                    console.log(res);
+                    passwordMessage.innerHTML =`<p>Lozinka uspesno promenjena</p>`;
+                    passwordMessage.classList.add("alert-success");
+                    passwordMessage.classList.remove("alert-danger","d-none");
+                    oldPassword.nextElementSibling.innerHTML="";
+                    confPassword.nextElementSibling.innerHTML="";
+                    newPassword.nextElementSibling.classList.add("text-muted");
+                    newPassword.nextElementSibling.innerHTML ="Lozinka mora imati najmanje 8 karaktera";
+                    document.querySelector("#changePasswordForm").reset();
+                },function(xhr){
+                    const errors=xhr.responseJSON;
+                    console.log(errors);
+                    if (errors.hasOwnProperty("old")){
+                        oldPassword.nextElementSibling.innerHTML=errors.old;
+                        oldPassword.nextElementSibling.classList.add("text-danger");
+                    }
+                    if (errors.hasOwnProperty("new")){
+                        newPassword.nextElementSibling.innerHTML=errors.new;
+                        newPassword.nextElementSibling.classList.add("text-danger");
+                    }
+                    if (errors.hasOwnProperty("confirm")){
+                        confPassword.nextElementSibling.innerHTML = errors.confirm;
+                    }
+                    // else{
+                    //     passwordMessage.innerHTML = `<p>Došlo je do greške</p>`;
+                    //     passwordMessage.classList.add("alert-danger");
+                    //     passwordMessage.classList.remove("alert-success", "d-none"); 
+                    // }
+                })
+            }
+        })
     }
     //index
     else{
