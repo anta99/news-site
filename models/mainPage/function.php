@@ -8,4 +8,8 @@
         $popularNewsQuery="SELECT v.*,COUNT(k.id) AS comCount FROM vesti v LEFT OUTER JOIN komentari k ON v.id=k.vest_id GROUP BY v.id ORDER BY comCount DESC,v.datum DESC LIMIT 0,4";
         return executeQuery($popularNewsQuery);
     }
+    function getSurvey(){
+        $surveyQuery="SELECT a.pitanje,o.* FROM anketa a INNER JOIN odgovori o ON a.id=o.anketa_id WHERE a.aktivna=1";
+        return executeQuery($surveyQuery);
+    }
 ?>

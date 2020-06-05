@@ -2,7 +2,7 @@
     <nav class="row">
         <div class="col-1 p-2">
             <a href="index.php">
-              <img src="assets/images/logoNovi.png" alt="logo" />
+              <img src="assets/images/logoNovi.png" alt="Glasnik portal logo" />
             </a>
             </div>
             <div class="col-12 col-lg-7 p-3 d-none d-lg-block menu">
@@ -31,6 +31,15 @@
                     <?php
                         endif;
                     endforeach;
+                    if($admin):
+                    ?>
+                    <li><a href="index.php?page=adminPanel">Admin panel</a></li>
+                    <?php
+                    elseif($author):
+                    ?>
+                    <li><a href="index.php?page=addNews">Dodaj vest</a></li>
+                    <?php    
+                    endif;
                     ?>
                     <li><a href='#' id='closeBtn'><i class='fa fa-times'></i></a></li>
                 </ul>

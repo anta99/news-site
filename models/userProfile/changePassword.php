@@ -1,9 +1,10 @@
 <?php
     header("Content-Type:applicaition/json");
+    $errors=[];
     if(isset($_POST["change"])){
         require_once "../../config/connection.php";
         $passwordRegex="/^[A-z0-9\.\?\,\s\!\@\#]{8,50}$/";
-        $errors=[];
+        
         if(isset($_POST["userId"])){
             $id=$_POST["userId"];
             $getOldPassword="SELECT sifra FROM korisnici WHERE id=:id";
@@ -38,14 +39,15 @@
             $prepareUpdate->bindParam(":id",$id);
             try{
                 $prepareUpdate->execute();
-                if($prepareUpdate->rowCount()==1){
-                    http_response_code(204);
-                }
-                else{
-                    http_response_code(400);
-                    $errors["updateErr"]="Došlo je do greške";
-                    echo json_encode($errors);
-                }
+                // if($prepareUpdate->rowCount()==1){
+                //     http_response_code(204);
+                // }
+                // else{
+                //     http_response_code(400);
+                //     $errors["updateErr"]="Došlo je do greške";
+                //     echo json_encode($errors);
+                // }
+                http_response_code(204);
             }
             catch(PDOException $e){
                 http_response_code(500);
@@ -60,6 +62,7 @@
     }
     else{
         http_response_code(400);
-        echo json_encode("Zahtev nije dobar");
+        $errors["updateErr"]="Zahtev nije dobar";
+        echo json_encode($errors);
     }
 ?>

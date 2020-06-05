@@ -1,6 +1,6 @@
 <?php
     if(!isset($_GET["id"])){
-        header("Location:index.php?page=404");
+        header("Location:index.php?page=notFound");
     }
     else{
         $newsId=$_GET["id"];
@@ -11,23 +11,23 @@
     <div class="row">
             <?php
                 require_once "models/singleNews/function.php";
-                $singleNews=getNews($newsId);
+                //$singleNews=getNews($newsId);
                 $tags=getTags($newsId);
                 //writeNews($newsId);
             ?>
         <article class="col-12 mx-auto">
-        <img src="assets/images/<?=$singleNews["src"]?>" alt="<?=$singleNews["alt"]?>" class="img" />
+        <img src="assets/images/<?=$news["src"]?>" alt="<?=$news["alt"]?>" class="img" />
         </article>
         <article class="container">
-        <span class="cat badge badge-secondary mt-4 ml-3 text-right"><?=$singleNews["category"]?></span>
+        <span class="cat badge badge-secondary mt-4 ml-3 text-right"><?=$news["category"]?></span>
         <div class="col-12">
-            <h1 class="text-center"><?=$singleNews["naslov"]?></h1>
+            <h1 class="text-center"><?=$news["naslov"]?></h1>
             <div class="news-details my-2 text-black-50 text-center">
                 <span><i class="fa fa-calendar">
-                </i><?=date("d/m/Y",strtotime($singleNews["datum"]))?></span>
-                    <span><i class="fa fa-user mx-1"></i> <?=$singleNews["author"]?></span>
+                </i><?=date("d/m/Y",strtotime($news["datum"]))?></span>
+                    <span><i class="fa fa-user mx-1"></i> <?=$news["author"]?></span>
             </div>
-                <p><?=$singleNews["tekst"]?></p>
+                <p><?=$news["tekst"]?></p>
                 <span class="mt-5 d-inline-block">Tagovi:</span>
                 <ul class="d-inline">
                 <?php

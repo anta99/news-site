@@ -15,14 +15,19 @@
         }
     }
     require_once "config/connection.php";
-    require_once "views/fixed/head.php";
-    require_once "views/fixed/header.php";
     if(isset($_GET["page"])){
         $page=$_GET["page"];
-        require_once "views/$page.php";
+        switch($page){
+            case "news":case "contact":case "authorization":case "singleNews":case "userProfile":case "notFound":case "adminPanel":case "verificationPage":case "addNews":break;
+            default: $page="notFound";break;
+            
+        }
     }
     else{
-        require_once "views/indexContent.php";
+        $page="indexContent";
     }
+    require_once "views/fixed/head.php";
+    require_once "views/fixed/header.php";
+    require_once "views/$page.php";
     require_once "views/fixed/footer.php";
 ?>

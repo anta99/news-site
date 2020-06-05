@@ -20,6 +20,9 @@ ul{
     list-style: none;
     margin: 0px;
 }
+p{
+    margin: 0;
+}
 a{
   color:#000;
 
@@ -44,6 +47,9 @@ a{
         box-shadow:none;
         border-color: $black;
     }
+}
+.minHeight{
+    min-height: 45rem;
 }
 nav{
     background-color: $black !important;
@@ -401,4 +407,26 @@ footer{
 .col-form-label{
     line-height: 2.3;
 }
-
+//Contact
+.textareaCustom{
+    width: 100%;
+    resize: none;
+}
+#alertMsg{
+    position: fixed;
+    top:-500px;
+    z-index:997;
+    left:0;
+    right:0;
+}
+.slideAlert{
+    animation:alert 1s forwards;
+}
+@keyframes alert{
+    0%{
+        top:-500px;
+    }
+    100%{
+        top:15%;
+    }
+}

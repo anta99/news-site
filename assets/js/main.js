@@ -187,7 +187,7 @@ $(document).ready(function(){
     }
     //User profile
     else if (window.location.href.indexOf("page=userProfile") != -1){
-        const hiiden = document.querySelector("#userhidden").value;
+        const hidden = document.querySelector("#userhidden").value;
         $(".changeInfo").click(function(){
             const input=this.parentElement.querySelector("input");
             input.removeAttribute("readonly","readonly");
@@ -207,6 +207,8 @@ $(document).ready(function(){
             const newPassword=document.querySelector("#newPassword");
             const confPassword = document.querySelector("#confirmPass");
             const passwordMessage = document.querySelector("#passwordMessage");
+            passwordMessage.innerHTML="";
+            passwordMessage.classList.add("d-none");
             let ok= true;
             if(!inputCheck(passwordRegex,oldPassword)){
                 ok=false;
@@ -225,7 +227,7 @@ $(document).ready(function(){
             }
             if(ok){
                 const postObj={
-                    userId:hiiden,
+                    userId: hidden,
                     oldPassword:oldPassword.value,
                     newPassword:newPassword.value,
                     confirmPass: confPassword.value,
@@ -233,7 +235,7 @@ $(document).ready(function(){
                 }
                 ajaxReq("models/userProfile/changePassword.php",postObj,function(res){
                     console.log(res);
-                    passwordMessage.innerHTML =`<p>Lozinka uspesno promenjena</p>`;
+                    passwordMessage.innerHTML = `<p>Lozinka uspesno promenjena</p>`;
                     passwordMessage.classList.add("alert-success");
                     passwordMessage.classList.remove("alert-danger","d-none");
                     oldPassword.nextElementSibling.innerHTML="";
@@ -255,14 +257,75 @@ $(document).ready(function(){
                     if (errors.hasOwnProperty("confirm")){
                         confPassword.nextElementSibling.innerHTML = errors.confirm;
                     }
-                    // else{
-                    //     passwordMessage.innerHTML = `<p>Došlo je do greške</p>`;
-                    //     passwordMessage.classList.add("alert-danger");
-                    //     passwordMessage.classList.remove("alert-success", "d-none"); 
-                    // }
+                    if (errors.hasOwnProperty("updateErr")){
+                        confPassword.nextElementSibling.innerHTML = errors.updateErr;
+                    }
                 })
             }
-        })
+        });
+        $("#profileChange").submit(function(e){
+            const username = document.querySelector("#username");
+            const hiddenName = document.querySelector("#changeUserName");
+            if(inputCheck(userNameRegex,username)){
+                if(username.value!=hiddenName.value){
+                    return true;
+                }
+                else{
+                    username.nextElementSibling.innerHTML="Novo korisničko ime mora biti drugačije od trentunog";
+                    username.nextElementSibling.classList.add("text-danger");
+                    e.preventDefault();
+                }
+            }
+            e.preventDefault();
+        });
+    }
+    //page=contact
+    else if(window.location.href.indexOf("page=contact")!= -1){
+        $("#sendBtn").click(function(){
+            const contactName = document.querySelector("#contactName");
+            const contactMail = document.querySelector("#contactMail");
+            const message = document.querySelector("#contactMessage");
+            const alert = document.querySelector("#alertMsg");
+            let ok=true;
+            !inputCheck(contactNameRegex,contactName) ? ok=false : null;
+            !inputCheck(emailRegex, contactMail) ? ok = false : null;
+            !inputCheck(messageRegex, message) ? ok = false : null;
+            if(ok){
+                const postObj={
+                    name:contactName.value,
+                    email:contactMail.value,
+                    message:message.value,
+                    contact:true
+                };
+                ajaxReq("models/contact/inbox.php",postObj,function(res){
+                    if(alert!=null){
+                        alert.remove();
+                        alertMsgPopUp(true, res);
+                    }
+                    else{
+                        alertMsgPopUp(true, res);
+                    }
+                    console.log(res);
+                },function(xhr){
+                    const error=xhr.responseJSON;
+                    if(alert!= null) {
+                        alert.remove();
+                        alertMsgPopUp(false, error);
+                    }
+                    else {
+                        alertMsgPopUp(false, error);
+                    }
+                    console.log(xhr);
+                });
+            }
+        });
+    }
+    //page=addNews
+    else if (window.location.href.indexOf("page=addNews") != -1) {
+        $("#addNewNews").click(function(){
+          newsCheck(false);
+
+        });
     }
     //index
     else{
@@ -276,15 +339,56 @@ $(document).ready(function(){
             error:function(xhr){
                 console.log(xhr);
             }
-        })
+        });
+        $("#voteBtn").click(function(){
+            const button=this;
+            const answers = [...document.querySelectorAll("input[name='surveyAnswer']")];
+            const user = document.querySelector("#surveyUser");
+            let voted=false;
+            let answerId;
+            for(let i of answers){
+                if(i.checked){
+                    voted=true;
+                    answerId = i.dataset.answerid;
+                    break;
+                }
+            }
+            if(voted){
+                const postObj={
+                    userId:user.value,
+                    answer:answerId,
+                    vote:"OK"
+                };
+                ajaxReq("models/mainPage/surveyAnswer.php",postObj,function(res){
+                    console.log("Hvala za učešće u anketi");
+                    button.nextElementSibling.innerHTML = `<p class="text-success text-center m-0">${res}</p>`;
+                },function(xhr){
+                    const errors=xhr.responseJSON;
+                    console.log(errors);
+                    let html="";
+                    for(let i of errors){
+                        html +=`<p class="text-danger text-center m-0">${i}</p>`;
+                    }
+                    button.nextElementSibling.innerHTML=html;
+                });
+            }
+            else{
+                button.nextElementSibling.innerHTML =`<p class="text-danger text-center m-0">Morate izabrati neki odgovor</p>`;
+            }
+        });
     }
 })
 //Regex
-const firstNameRegex =/^[A-Z][a-z]{2,14}(\s[A-Z][a-z]{2,14})*$/;
-const lastNameRegex = /^[A-Z][a-z]{2,24}(\s[A-Z][a-z]{2,24})*$/;
+const firstNameRegex =/^[A-ZŠĐČŽĆ][a-zšđčćž]{2,14}(\s[A-Z][a-z]{2,14})*$/;
+const lastNameRegex = /^[A-ZŠĐČŽĆ][a-zšđčćž]{2,24}(\s[A-Z][a-z]{2,24})*$/;
 const userNameRegex=/^[A-zčžćšđČŽĆŠĐ0-9\?\!\.]{3,30}$/;
 const emailRegex = /^[a-z\.\!\?0-9]{4,40}\@[a-z0-9]{3,15}(\.[a-z0-9]{3,15})*\.[a-z]{2,3}$/;
 const passwordRegex=/^[A-z0-9\.\?\,\s\!\@\#]{8,50}$/;
+const contactNameRegex = /^[A-ZŠĐČŽĆ][a-zšđčćž]{2,19}(\s[A-ZŠĐČŽĆ][a-zšđčćž]{2,19})*$/;
+const messageRegex = /^[A-zšđčćžŠĐČŽĆ0-9\s\?\.\,\!\"\']{2,}$/;
+const newsHeaderRegex=/^[A-ZŠĐČŽĆ][a-zšđčžć\s\?\!\.]{1,59}$/;
+const newsDescRegex = /^[A-ZŠĐČŽĆ][a-zšđčžć\s\?\!\.]{1,199}$/;
+const imageRegex = /^image\/(jpeg|jpg|png)$/;
 const userIcon = document.querySelector("#userIcon");
 const menuSearch = document.querySelector("#menuSearch");
 //Function declaration
@@ -462,7 +566,7 @@ function printNews(arr){
                         ${i.datum}</span>
                         <span><i class="fa fa-user mx-1"></i> ${i.author}</span>
                     </div>
-                    <p class="card-text text-truncate">${i.tekst}</p>
+                    <p class="card-text ">${i.opis}</p>
                     <a href="index.php?page=singleNews&id=${i.id}" class="btn btn-primary d-block readNews">Pročitaj još</a>
                 </div>
             </div>
@@ -525,4 +629,97 @@ function writeInLS(page,cat){
         categories:cat
     }
     localStorage.setItem("filteri",JSON.stringify(obj));
+}
+function alertMsgPopUp(result,messages){
+    const body=document.querySelector("body");
+    let alertHtml=`
+    <div class="col-12 col-md-7 col-lg-5 text-center mx-auto p-3 alert alert-dismissible fade show" id="alertMsg" role="alert">
+        <div id="msg">`;
+    for(let i of messages){
+        alertHtml+=`<p class="m-0">${i}</p>`;
+    }
+    alertHtml+=`</div>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>`;
+    $("body").append(alertHtml);
+    const alert = document.querySelector("#alertMsg");
+    result ? alert.classList.add("alert-success", "slideAlert") : alert.classList.add("alert-danger", "slideAlert");
+}
+function formDataCheck(update,obj,propName,regex,visibleValue,hiddenValue=null){
+    if(inputCheck(regex, visibleValue)) {
+        if (update) {
+            if (visibleValue.value != hiddenValue.value) {
+                obj.append(propName, visibleValue.value);
+            }
+        }
+        else {
+            obj.append(propName, visibleValue.value);
+        }
+        return true;
+    }
+    return false;
+}
+function newsCheck(update){
+    var postObj = new FormData();
+    const header = document.querySelector("#newsHeader");
+    const desc = document.querySelector("#newsDesc");
+    const category = document.querySelector("#newsCat");
+    const author = document.querySelector("#newsAuthor");
+    const text = document.querySelector("#newsText");
+    const image = document.querySelector("#newsImg");
+    const hiddenHeader = document.querySelector("#newsHeaderHidden");
+    let ok=true;
+    !formDataCheck(update,postObj,"header",newsHeaderRegex,header) ? ok=false : null;
+    !formDataCheck(update, postObj,"desc", newsDescRegex, desc) ? ok=false :null;
+    !formDataCheck(update, postObj, "text",messageRegex, text) ? ok = false : null;
+    if(category.value=="0"){
+        ok=false;
+        category.nextElementSibling.innerHTML="Morate izabrati kategoriju";
+    }
+    else{
+        category.nextElementSibling.innerHTML = "";
+        postObj.append("category", category.value);
+    }
+    if (author.value == "0") {
+        ok = false;
+        author.nextElementSibling.innerHTML = "Morate izabrati autora";
+    }
+    else {
+        author.nextElementSibling.innerHTML = "";
+        postObj.append("author",author.value);
+    }
+    if(image.value!=""){
+        if (!imageRegex.test(image.files[0].type)) {
+            ok=false;
+            image.nextElementSibling.innerHTML = "Format slike nije dobar.Molimo vas izaberite drugi format.";
+        }
+        else{
+            image.nextElementSibling.innerHTML ="";
+            postObj.append("image",image.files[0]);
+        }
+    }
+    else{
+        ok=false;
+        image.nextElementSibling.innerHTML="Morate izabrati sliku";
+    }
+    if(ok){
+        postObj.append("add",true);
+        $.ajax({
+            url:"models/admin/add/news.php",
+            method:"POST",
+            contentType: false,
+            cache: false,
+            processData: false,
+            data: postObj,
+            success:function(res){
+                console.log(res);
+            },
+            error:function(xhr){
+                console.log(xhr);
+            }
+        });
+    }
+    
 }

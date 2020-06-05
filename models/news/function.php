@@ -1,7 +1,7 @@
 <?php
     function filterNews($currentPage,$categoires){
         global $conn;
-        $newsOnPage=1;
+        $newsOnPage=8;
         $startIndex=$newsOnPage*($currentPage-1);
         $filterQuery="SELECT v.*,k.naziv as category,CONCAT(kor.ime,' ',kor.prezime) as author,s.src as src,s.alt as alt
         FROM vesti v INNER JOIN kategorije k ON v.kat_id=k.id INNER JOIN autori a ON a.id=v.autor_id INNER JOIN korisnici kor ON kor.id=a.kor_id INNER JOIN slike s ON s.vest_id=v.id INNER JOIN tip_slike tp ON tp.id=s.tip_id WHERE tp.naziv='thumbnail' ";

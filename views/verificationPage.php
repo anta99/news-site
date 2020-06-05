@@ -9,7 +9,7 @@
 <main>
     <section class="container-fluid">
         <div class="row">
-            <article class="col-12 text-center">
+            <article class="col-12 text-center minHeight">
                 <h1 class="my-3">Verifikacija naloga</h1>
                 <?php
                     require_once "models/authorization/function.php";

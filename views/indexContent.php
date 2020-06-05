@@ -42,7 +42,7 @@
                                     <span><i class="fa fa-user mx-1"></i> <?=$news["author"]?></span>
                                 </div>
                                 
-                                <p class="card-text text-truncate"><?=$news["tekst"]?></p>
+                                <p class="card-text"><?=$news["opis"]?></p>
                                 <a href="index.php?page=singleNews&id=<?=$news["id"]?>" class="btn btn-primary d-block readNews">Pročitaj još</a>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                 <section class="col-12 col-md-4 col-lg-4 col-xl-3 p-3">
                 <article class="row">
                     <section class="col-12 sidePanel p-3 my-2">
-                        <h2>Popularno</h2>
+                        <h2>Popularne vesti</h2>
                         <?php
                             $popularNews=popularNews();
                             foreach($popularNews as $popular):
@@ -86,28 +86,34 @@
                     </section>
                     <div class="col-12 sidePanel p-3 my-2">
                         <h2>Anketa</h2>
+                        <?php
+                            $survey=getSurvey();
+                        ?>
+                        <h5 data-surveyid="<?=$survey[0]["anketa_id"]?>"><?=$survey[0]["pitanje"]?></h5>
+                        <?php
+                            foreach($survey as $answer):
+                        ?>
                         <div>
-                            <h3>Vasa omlijena drustvena mreza?</h3>
-                            <div>
-                                <input type="checkbox" name="anketaOdg"/>
-                                <label for="">Facebook</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" name="anketaOdg"/>
-                                <label for="">Instagram</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" name="anketaOdg"/>
-                                <label for="">Twitter</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" name="anketaOdg"/>
-                                <label for="">Neka druga</label>
-                            </div>
+                            <input type="radio" id="<?=strtolower(str_replace(" ","",$answer["tekst"]))?>" name="surveyAnswer" data-answerid="<?=$answer["id"]?>"/>
+                            <label for="<?=strtolower(str_replace(" ","",$answer["tekst"]))?>"><?=$answer["tekst"]?></label>
                         </div>
-                    </div>
-                    <div class="col-12 sidePanel p-3 my-2">
-                        <h2>Pišite nam</h2>
+                        <?php
+                            endforeach;
+                        ?>
+                        <button class="btn buttonCustom" <?php if(!$logged) echo "disabled='disabled'"?> id="voteBtn">Glasaj</button>
+                        <?php
+                            if(!$logged):
+                        ?>
+                        <p class="text-muted font-italic">Morate biti prijavljeni da biste glasali</p>
+                        <?php
+                            else:
+                        ?>
+                        <div></div>
+                        <input type="hidden" id="surveyUser" value="<?=$user["id"]?>" />
+                        
+                        <?php
+                            endif;
+                        ?>
                     </div>
                 </article>
             </section>
