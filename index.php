@@ -18,7 +18,7 @@
     if(isset($_GET["page"])){
         $page=$_GET["page"];
         switch($page){
-            case "news":case "contact":case "authorization":case "singleNews":case "userProfile":case "notFound":case "adminPanel":case "verificationPage":case "addNews":break;
+            case "news":case "contact":case "authorization":case "singleNews":case "userProfile":case "notFound":case "adminPanel":case "verificationPage":case "tagNews":case "addNews":break;
             default: $page="notFound";break;
             
         }

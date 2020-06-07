@@ -3,7 +3,7 @@
        header("Location:index.php?page=userProfile"); 
     }
 ?>
-<main class="container-fluid p-3">
+<main class="container-fluid p-3 p-lg-5">
     <h1 class="text-center my-3">Prijava/Registracija</h1>
     <!-- Sign In Form -->
     <div class="row p-0 p-lg-2">

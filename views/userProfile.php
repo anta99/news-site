@@ -28,7 +28,7 @@
     <section class="container p-5 minHeight">
         <div class="row">
             <div class="col-12 text-center">
-                <div class="tab-content card" id="userTabs">
+                <div class="tab-content card tabs" id="userTabs">
                     <input type="hidden" name="userhidden" form="profileChange" id="userhidden" value="<?=$user["id"]?>" />
                     <!-- User info -->
                     <div class="tab-pane fade show active p-3" id="userInfo" role="tabpanel" aria-labelledby="home-tab-just">

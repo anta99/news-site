@@ -117,12 +117,10 @@ $(document).ready(function(){
             else {
                 terms.nextElementSibling.innerHTML = "";
             }
-            // ok ? console.log("Saljemo na back") : console.log("Nesto ne valja");
             if(ok){
                 const list = document.querySelector("#registerMessage");
                 const registerObj={
                     firstName: firstName.value,
-                    //firstName: "djolo",
                     lastName:lastName.value,
                     username:username.value,
                     mail:mail.value,
@@ -327,6 +325,11 @@ $(document).ready(function(){
 
         });
     }
+    //page=adminPanel
+    else if (window.location.href.indexOf("page=adminPanel") != -1){
+        $(".page-link").click(changePage);
+        $(".deleteNewsLink").click(deleteNews);
+    }
     //index
     else{
         $.ajax({
@@ -385,9 +388,10 @@ const userNameRegex=/^[A-zčžćšđČŽĆŠĐ0-9\?\!\.]{3,30}$/;
 const emailRegex = /^[a-z\.\!\?0-9]{4,40}\@[a-z0-9]{3,15}(\.[a-z0-9]{3,15})*\.[a-z]{2,3}$/;
 const passwordRegex=/^[A-z0-9\.\?\,\s\!\@\#]{8,50}$/;
 const contactNameRegex = /^[A-ZŠĐČŽĆ][a-zšđčćž]{2,19}(\s[A-ZŠĐČŽĆ][a-zšđčćž]{2,19})*$/;
-const messageRegex = /^[A-zšđčćžŠĐČŽĆ0-9\s\?\.\,\!\"\']{2,}$/;
-const newsHeaderRegex=/^[A-ZŠĐČŽĆ][a-zšđčžć\s\?\!\.]{1,59}$/;
-const newsDescRegex = /^[A-ZŠĐČŽĆ][a-zšđčžć\s\?\!\.]{1,199}$/;
+const messageRegex = /^[A-zšđčćžŠĐČŽĆ0-9\s\?\.\,\!\"\'\-\)\(\:]{2,}$/;
+//const newsHeaderRegex=/^[A-ZŠĐČŽĆ][a-zšđčžć\s\?\!\.0-9]{1,59}$/;
+const newsHeaderRegex = /^[A-ZŠĐČŽĆ][A-zŠĐČŽĆšđčćž\s\,\.\!\?\-\-\)\(\:]{0,59}$/;
+const newsDescRegex = /^[A-ZŠĐČŽĆ][A-zŠĐČŽĆšđčžć\s\?\!\.0-9\"\'\-\)\(\:]{1,199}$/;
 const imageRegex = /^image\/(jpeg|jpg|png)$/;
 const userIcon = document.querySelector("#userIcon");
 const menuSearch = document.querySelector("#menuSearch");
@@ -480,7 +484,7 @@ function commentFormPrint(parent){
     }
 }
 function inputCheck(regex,elem){
-    if (!regex.test(elem.value)){
+    if (!regex.test(elem.value.trim())){
         elem.classList.add("inputError");
         elem.nextElementSibling.classList.remove("text-muted");
         elem.nextElementSibling.classList.add("text-danger");
@@ -581,10 +585,7 @@ function printNews(arr){
     }
     target.innerHTML=html;
 }
-function setNewsPage(pageNumber){
-   
-}
-function paginationPrint(pagesNumber){
+function paginationPrint(pagesNumber,admin=false){
     const target = document.querySelector(".pagination");
     let html="";
     for(let i=1;i<=pagesNumber;i++){
@@ -603,15 +604,33 @@ function changePage(){
     const pageNumber = Number(this.innerHTML);
     $(".page-item").removeClass("active");
     this.parentElement.classList.add("active");
-    const postObj={
-        page:pageNumber,
-        categoriesIds:getActiveCategories(),
-        filter:"OK"
+    let admin=false;
+    if(window.location.href.indexOf("page=adminPanel")!=-1){
+        admin=true;
     }
-    writeInLS(pageNumber,getActiveCategories());
-    ajaxReq("models/news/filterNews.php",postObj,function(res){
-        printNews(res.news);
-    });
+    if(admin){
+        const postObj = {
+            page: pageNumber,
+            categoriesIds: [],
+            filter: "OK"
+        }
+        writeInLS(pageNumber, getActiveCategories());
+        ajaxReq("models/news/filterNews.php", postObj, function (res) {
+            printAdminNews(res.news);
+        });
+    }
+    else{
+        const postObj = {
+            page: pageNumber,
+            categoriesIds: getActiveCategories(),
+            filter: "OK"
+        }
+        writeInLS(pageNumber, getActiveCategories());
+        ajaxReq("models/news/filterNews.php", postObj, function (res) {
+            printNews(res.news);
+        });
+    }
+    
 }
 function colorActiveCategories(arr){
     for(let i of arr){
@@ -679,16 +698,31 @@ function newsCheck(update){
         category.nextElementSibling.innerHTML="Morate izabrati kategoriju";
     }
     else{
+        if (update) {
+            if (category.value != hiddenCategory.value) {
+                postObj.append("category", category.value);
+            }
+        }
+        else {
+            postObj.append("category", category.value);
+        }
         category.nextElementSibling.innerHTML = "";
-        postObj.append("category", category.value);
     }
     if (author.value == "0") {
         ok = false;
         author.nextElementSibling.innerHTML = "Morate izabrati autora";
     }
     else {
+        if(update){
+            if(author.value!=hiddenAuthor.value){
+                postObj.append("author", author.value);
+            }
+        }
+        else{
+            postObj.append("author", author.value);
+        }
         author.nextElementSibling.innerHTML = "";
-        postObj.append("author",author.value);
+        
     }
     if(image.value!=""){
         if (!imageRegex.test(image.files[0].type)) {
@@ -715,11 +749,53 @@ function newsCheck(update){
             data: postObj,
             success:function(res){
                 console.log(res);
+                const successMsg=`Vest uspešno dodata!Pogledajte vest na ovom <a href="${res}">linku</a>`;
+                alertMsgPopUp(true, [successMsg]);
             },
             error:function(xhr){
                 console.log(xhr);
+                const errors=xhr.responseJSON;
+                alertMsgPopUp(false, errors);
             }
         });
     }
     
+}
+function printAdminNews(arr){
+    const target = document.querySelector(".table tbody");
+    let html=``;
+    for(let i of arr){
+        html+=
+        `
+        <tr>
+            <th scope="row">${i.id}</th>
+            <td>${i.naslov}</td>
+            <td>${i.category}</td>
+            <td>${i.author}</td>
+            <td>${i.datum}</td>
+            <td>
+                <a href="index.php?page=addNews&updateid=${i.id}" class="updateNewsLink changeNewsLinks ml-2">Izmeni</a>
+                <a href="#" class="deleteNewsLink changeNewsLinks ml-2" data-deleteid="${i.id}">Obriši</a>
+            </td>
+        </tr>
+        `;
+    }
+    target.innerHTML=html;
+    $(".deleteNewsLink").click(deleteNews);
+}
+function deleteNews(){
+    const page = Number(document.querySelector(".pagination .active a").innerHTML);
+    const deleteId = this.dataset.deleteid;
+    const postObj = {
+        deleteId: deleteId,
+        page: page,
+        deleteNews: true
+    };
+    ajaxReq("models/admin/delete/news.php",postObj,function(res){
+        printAdminNews(res.news);
+        paginationPrint(res.pagesNumber);
+    },function(xhr){
+        console.log(xhr);
+        alert(xhr.responseJSON);
+    });
 }

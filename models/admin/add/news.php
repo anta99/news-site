@@ -5,9 +5,9 @@
         require_once "../function.php";
         $errors=[];
         $newsParams=[];
-        $messageRegex = "/^[A-zšđčćžŠĐČŽĆ0-9\s\?\.\,\!\"\']{2,}$/";
-        $newsHeaderRegex="/^[A-ZŠĐČŽĆ][a-zšđčžć\s\?\!\.]{1,59}$/";
-        $newsDescRegex = "/^[A-ZŠĐČŽĆ][a-zšđčžć\s\?\!\.]{1,199}$/";
+        $messageRegex = "/^[A-zšđčćžŠĐČŽĆ0-9\s\?\.\,\!\"\'\-\)\(\:]{2,}$/";
+        $newsHeaderRegex="/^[A-ZŠĐČŽĆ][A-zŠĐČŽĆšđčćž\s\,\.\!\?\-\-\)\(\:]{0,59}$/";
+        $newsDescRegex = "/^[A-ZŠĐČŽĆ][A-zŠĐČŽĆšđčžć\s\?\!\.0-9\"\'\-\)\(\:]{1,199}$/";
         $imageRegex = "/^image\/(jpeg|jpg|png)$/";
         $allowImgFormats=["jpeg","png","jpg"];
         if(isset($_POST["header"])){

@@ -11,9 +11,8 @@
     <div class="row">
             <?php
                 require_once "models/singleNews/function.php";
-                //$singleNews=getNews($newsId);
+                
                 $tags=getTags($newsId);
-                //writeNews($newsId);
             ?>
         <article class="col-12 mx-auto">
         <img src="assets/images/<?=$news["src"]?>" alt="<?=$news["alt"]?>" class="img" />

@@ -389,7 +389,7 @@ footer{
     margin: 0px;
 }
 //User profile
-#userTabs{
+.tabs{
     box-shadow: none;
 }
 .nav-link{
@@ -428,5 +428,20 @@ footer{
     }
     100%{
         top:15%;
+    }
+}
+//Admin panel
+.table td{
+    font-size:18px;
+    @media screen and(max-width:1150px) {
+        font-size:16px;
+    }
+}
+.changeNewsLinks{
+    text-decoration: underline;
+    font-size:18px;
+    &:hover{
+        color:$red;
+        text-decoration: underline;
     }
 }

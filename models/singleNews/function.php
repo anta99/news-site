@@ -28,7 +28,7 @@
             return false;
         }
     }
-    //Funkcija namenjena da ajax=-om za JS vrati sve odgvore na komentare 
+    //Funkcija namenjena da ajax-om za JS vrati sve odgvore na komentare 
     function getAllReplies($id){
         global $conn;
         $query="SELECT kom.*,kor.username FROM komentari kom INNER JOIN korisnici kor ON kor.id=kom.kor_id WHERE vest_id=:id AND roditelj_id IS NOT NULL";
