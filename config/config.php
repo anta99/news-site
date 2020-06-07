@@ -6,6 +6,8 @@
     define("DBNAME",env("DBNAME"));
     define("USERNAME",env("USERNAME"));
     define("PASSWORD",env("PASSWORD"));
+
+    define("LOG_FILE",ABSOLUTE_PATH."data/logfile.txt");
     function env($flag){
         //$envFile=fopen(ENV_FILE);
         $envRows=file(ENV_FILE);

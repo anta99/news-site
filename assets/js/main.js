@@ -320,9 +320,16 @@ $(document).ready(function(){
     }
     //page=addNews
     else if (window.location.href.indexOf("page=addNews") != -1) {
+       
         $("#addNewNews").click(function(){
           newsCheck(false);
-
+        });
+        $("#moreTagsBtn").click(function(){
+            getMoreTags();
+        });
+        $("#newTagsBtn").click(function(){
+            $("#newTags").append(`<input type="text" class="newTagInput form-control clearFocus mt-3" placeholder="Unseite naziv taga" name="newTagInput" />
+            <p class="text-danger"></p>`);
         });
     }
     //page=adminPanel
@@ -393,6 +400,7 @@ const messageRegex = /^[A-zšđčćžŠĐČŽĆ0-9\s\?\.\,\!\"\'\-\)\(\:]{2,}$/;
 const newsHeaderRegex = /^[A-ZŠĐČŽĆ][A-zŠĐČŽĆšđčćž\s\,\.\!\?\-\-\)\(\:]{0,59}$/;
 const newsDescRegex = /^[A-ZŠĐČŽĆ][A-zŠĐČŽĆšđčžć\s\?\!\.0-9\"\'\-\)\(\:]{1,199}$/;
 const imageRegex = /^image\/(jpeg|jpg|png)$/;
+const errorP = document.querySelector("#tagsDiv p");
 const userIcon = document.querySelector("#userIcon");
 const menuSearch = document.querySelector("#menuSearch");
 //Function declaration
@@ -724,6 +732,14 @@ function newsCheck(update){
         author.nextElementSibling.innerHTML = "";
         
     }
+    let tags = !tagsCheck(postObj) ? false : true;
+    if(tags){
+        ok = false;
+        console.log("pali")
+    }
+    else{
+        tagsCheck(postObj);
+    }
     if(image.value!=""){
         if (!imageRegex.test(image.files[0].type)) {
             ok=false;
@@ -798,4 +814,113 @@ function deleteNews(){
         console.log(xhr);
         alert(xhr.responseJSON);
     });
+}
+function getMoreTags(){
+    //let ok=true;
+    //const tagsValue = !checkSelectTags() ? ok = false : checkSelectTags();
+    const selectedTags = [...document.querySelectorAll(".tagsDdl")].filter(x => x.value != "0");
+    if(selectedTags.length==0){
+        errorP.innerHTML="Morate izabrati neki tag";
+        return false;
+    }
+    let tagsValue = selectedTags.map(x => x.value);
+    
+        const tagObj = {
+            selectedTags: tagsValue,
+            moreTags: true
+        }
+        ajaxReq("models/admin/add/moreTags.php", tagObj, function (res) {
+            //console.log(res);
+            const target = document.querySelector(".tagsDdlDiv");
+            let html = `<select name="tagsDdl" class="mt-3 browser-default custom-select clearFocus tagsDdl"><option value="0">Izaberite tag</option>`;
+            for (let i of res) {
+                html += `
+                <option value="${i.id}">${i.naziv}</option>
+            `;
+            }
+            html += `</select>`;
+            $(target).append(html);
+        }, function (xhr) {
+            //console.log(xhr);
+            alert(xhr.responseJSON);
+        });
+    
+}
+// function checkSelectTags(){
+//     const selectedTags = [...document.querySelectorAll(".tagsDdl")].filter(x => x.value != "0");
+//     let tagsValue = selectedTags.map(x => x.value);
+//     //Brisanje duplikata ako korisnik izabere dva ista taga iz dropdown liste
+//     tagsValue=Array.from(new Set(tagsValue));
+//     if (selectedTags.length == 0) {
+//         errorP.innerHTML = "Morate izabrati neki tag";
+//         console.log("greska iz starih");
+//         return false;
+//     }
+//     errorP.innerHTML = "";
+//     return tagsValue;
+// }
+// function checkInputTags(){
+//     const tagRegex=/^[A-z]{2,50}$/;
+//     let ok=true;
+//     const tags = [...document.querySelectorAll(".newTagInput")].filter(x=>x.value!="");
+//     if(tags.length!=0){
+//         for(let i of tags){
+//             if(!inputCheck(tagRegex,i)){
+//                 ok=false;
+//             }
+//         }
+//         if(ok){
+//             const tagsValue=tags.map(x=>x.value);
+//             return Array.from(new Set(tagsValue));
+//         }
+//         console.log("greska iz novih");
+//         return false;
+//     }
+//     else{
+        
+//         errorP.innerHTML="Morate izabrati neki tag";
+//     }
+// }
+function tagsCheck(obj){
+    let ok = true;
+    const tagRegex = /^[A-z]{2,50}$/;
+    const selectedTags = [...document.querySelectorAll(".tagsDdl")].filter(x => x.value != "0");
+    const inputTags = [...document.querySelectorAll(".newTagInput")].filter(x => x.value != "");
+    let selectedTagsValue = selectedTags.map(x => x.value);
+    let inputTagsValue = inputTags.map(x => x.value);
+    //Brisanje duplikata ako korisnik izabere dva ista taga iz dropdown liste ili unese dve iste vrednosti
+    selectedTagsValue = Array.from(new Set(selectedTagsValue));
+    inputTagsValue = Array.from(new Set(inputTagsValue))
+    if(selectedTags.length==0 && inputTags.length==0){
+        errorP.innerHTML = "Morate izabrati neki tag";
+        return false;
+    }
+    else if (selectedTags.length==0){
+        for (let i of inputTags) {
+            if (!inputCheck(tagRegex, i)) {
+                ok = false;
+            }
+        }
+        if(ok){
+            const stringNewTags = JSON.stringify(inputTagsValue);
+            obj.append("newTags", stringNewTags);
+            errorP.innerHTML = "";
+        }
+        else{
+            return false;
+        }
+        
+    }
+    else if(inputTags.length==0){
+        const stringTags = JSON.stringify(selectedTagsValue)
+        obj.append("tags", stringTags)
+        errorP.innerHTML = "";
+    }
+    else{
+        errorP.innerHTML = ""
+        const stringTags = JSON.stringify(selectedTagsValue);
+        const stringNewTags = JSON.stringify(inputTagsValue);
+        obj.append("tags", stringTags)
+        obj.append("newTags", stringNewTags);
+    }
 }

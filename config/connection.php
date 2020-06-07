@@ -1,5 +1,6 @@
 <?php
     require_once "config.php";
+    writeLog();
     try{
         $conn=new PDO("mysql:host=".HOST.";dbname=".DBNAME.";",USERNAME,PASSWORD,array(PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES 'utf8' COLLATE 'utf8_unicode_ci'"));
         $conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
@@ -74,5 +75,13 @@
         #$newsCount=count($news);
         $pagesNumber=ceil($newsCount/$newsOnPage);
         return ["news"=>$news,"pagesNumber"=>$pagesNumber,"newsNumber"=>$newsCount];
+    }
+    function writeLog(){
+        $logFile=fopen(LOG_FILE,"a");
+        $date=date('d/m/Y H:i:s');
+        // $log="{$_SERVER['PHP_SELF']}?{$_SERVER["QUERY_STRING"]}\t$date\t{$_SERVER["REMOTE_ADDR"]}\n";
+        $log="{$_SERVER['PHP_SELF']}\t$date\t{$_SERVER["REMOTE_ADDR"]}\n";
+        fwrite($logFile,$log);
+        fclose($logFile);
     }
 ?>

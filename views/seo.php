@@ -8,4 +8,5 @@
     $verificationPage=["title"=>"Verifikacija naloga","description"=>"Verifikujte svoj nalog na portalu Glasnik","keywords"=>"Glasnik,portal,nalog,verifikacija"];
     $adminPanel=["title"=>"Admin panel","description"=>"Panel za administratora sajta.","keywords"=>"Glasnik,portal,admin,panel"];
     $addNews=["title"=>"Dodavanje vesti","description"=>"Panel za administratora sajta.","keywords"=>"Glasnik,portal,admin,panel"];
+    $tagNews=["title"=>"Pretraga - Glasnik portal","description"=>"Pretraga sajta Glasnik portal.Na osnovu taga se prikazuju vesti","keywords"=>"Glasnik,portal,pretraga,tag"]
 ?>

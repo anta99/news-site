@@ -32,4 +32,7 @@
         }
         return ["cover"=>$newNameCover,"thumbnail"=>$newNameThumbnail];
     }
+    function getAllTags(){
+        return executeQuery("SELECT * FROM tagovi");
+    }
 ?>

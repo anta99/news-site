@@ -5,6 +5,8 @@
         require_once "../function.php";
         $errors=[];
         $newsParams=[];
+        $tagsNews=false;
+        $tagTable=false;
         $messageRegex = "/^[A-zšđčćžŠĐČŽĆ0-9\s\?\.\,\!\"\'\-\)\(\:]{2,}$/";
         $newsHeaderRegex="/^[A-ZŠĐČŽĆ][A-zŠĐČŽĆšđčćž\s\,\.\!\?\-\-\)\(\:]{0,59}$/";
         $newsDescRegex = "/^[A-ZŠĐČŽĆ][A-zŠĐČŽĆšđčžć\s\?\!\.0-9\"\'\-\)\(\:]{1,199}$/";
@@ -60,6 +62,19 @@
         else{
             $errors[]="Morate izabrati autora";
         }
+        if(!isset($_POST["tags"]) && !isset($_POST["newTags"])){
+            $errors[]="Morate izabrati tag";
+        }
+        else{
+            if(isset($_POST["tags"])){
+                $tag=json_decode($_POST["tags"]);
+                $tagsNews=true;
+            }
+            if(isset($_POST["newTags"])){
+                $newTags=json_decode($_POST["newTags"]);
+                $tagTable=true;
+            }
+        }
         if(isset($_FILES["image"])){
             $fileType=explode("/",$_FILES["image"]["type"])[1];
             if(!in_array($fileType,$allowImgFormats)){
@@ -85,11 +100,13 @@
                 $newsPrepare->bindParam($i+1,$newsParams[$i]);
             }
             try{
+                $conn->beginTransaction();
                 $newsPrepare->execute();
                 $newsId=$conn->lastInsertId();
                 $uploadImage=move_uploaded_file($tmpPath,$newPath);
                 if(!$uploadImage){
-                    $errors[]="DOšlo je do greške prilikom upload-a slike.";
+                    $errors[]="Došlo je do greške prilikom upload-a slike.";
+                    http_response_code(500);
                     echo json_encode($errors);
                 }
                 else{
@@ -104,13 +121,42 @@
                     $imagePrepare->bindParam(":altThumb",$thumSrc);
                     $imagePrepare->bindParam(":newsId",$newsId);
                     $imagePrepare->execute();
+
+                    //Insert tags
+                    if($tagsNews){
+                        $insertTags="INSERT INTO tag_vest(id_tag,id_vest) VALUES(:tagId,:newsId)";
+                        $prepareTags=$conn->prepare($insertTags);
+                        foreach($tag as $t){
+                            $prepareTags->bindParam(":tagId",$t);
+                            $prepareTags->bindParam(":newsId",$newsId);
+                            $prepareTags->execute();
+                        }
+                    }
+                    if($tagTable){
+                        $newTagQuery="INSERT INTO tagovi(naziv) VALUES(:name)";
+                        $newTagPrepare=$conn->prepare($newTagQuery);
+                        foreach($newTags as $new){
+                            $newTagPrepare->bindParam(":name",$new);
+                            $newTagPrepare->execute();
+                            $newTagId=$conn->lastInsertId();
+                            $tagNewsTableInsert="INSERT INTO tag_vest(id_tag,id_vest) VALUES(:tag,:news)";
+                            $tnti=$conn->prepare($tagNewsTableInsert);
+                            $tnti->bindParam(":tag",$newTagId);
+                            $tnti->bindParam(":news",$newsId);
+                            $tnti->execute();
+                        }
+                    }
+                    $conn->commit();
                     http_response_code(200);
                     echo json_encode("index.php?page=singleNews&id=$newsId");
                 }
             }
             catch(PDOException $e){
+                $conn->rollback();
                 http_response_code(500);
-                echo json_encode($e);
+                $errors[]="Došlo je do greške";
+                echo json_encode($errors);
+                //echo json_encode($e);
             }
         }
         else{

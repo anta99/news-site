@@ -33,7 +33,8 @@
             }
             catch(PDOException $e){
                 http_response_code(500);
-                echo json_encode(["Došlo je do greške"]);
+
+                echo json_encode(["err"=>"Došlo je do greške","baza"=>$e]);
             }
     }
     else{

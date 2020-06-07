@@ -72,6 +72,27 @@
                         <textarea type="text" class="p-2 clearFocus textareaCustom" id="newsText" rows="10" name="newsText"></textarea>
                         <p></p>
                     </div>
+                    <div class="mt-4" id="tagsDiv">
+                        <div class="tagsDdlDiv">
+                            <label for="" class="d-block">Tagovi</label>
+                            <select name="tagsDdl" class="browser-default custom-select clearFocus tagsDdl">
+                                <option value="0">Izaberite tag</option>
+                                <?php
+                                    $allTags=getAllTags();
+                                    foreach($allTags as $tag):
+                                ?>
+                                <option value="<?=$tag["id"]?>"><?=$tag["naziv"]?></option>
+                                <?php
+                                    endforeach;
+                                ?>
+                            </select>
+                        </div>
+                        
+                        <div id="newTags"></div>
+                        <button type="button" id="moreTagsBtn" class="btn buttonCustom">Dodaj još</button>
+                        <button type="button" id="newTagsBtn" class="btn buttonCustom">Napravi novi tag</button>
+                        <p class="text-danger"></p>
+                    </div>
                     <div class="mt-4">
                         <label for="" class="d-block">Slika</label>
                         <input type="file" name="newsImg" id="newsImg"  />
